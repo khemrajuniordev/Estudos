@@ -48,7 +48,7 @@ pontos1 = 0
 pontos2 = 0
 header_msdos()
 spinner_preloading()
-
+# Exemplo da vida real: é como começar uma partida de futebol com o placar zerado
 # Loop infinito para rodadas do jogo (só termina com 'break')
 # Exemplo da vida real: rodadas de truco, que só acabam quando alguém vence
 while True:
