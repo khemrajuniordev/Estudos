@@ -1,0 +1,32 @@
+🚀 Como juntar tudo?
+1. Divisão em partes (módulos ou classes)
+
+Quando você cria um programa, pensa nas entidades principais.
+Exemplo: locadora de livros →
+
+Usuário
+
+Livro
+
+Sistema (que faz o controle da locação)
+
+Cada entidade pode ser uma classe.
+
+2. Funções/métodos para ações
+
+Depois você pensa: o que o usuário pode fazer?
+
+Cadastrar usuário → método/função
+
+Cadastrar livro → método/função
+
+Alugar livro → método/função
+
+Listar livros → método/função
+
+Cada uma dessas ações vai ser um método da classe Sistema.
+
+3. Programa principal
+
+No final, você precisa de um "menu" que chama essas funções de acordo com o que o usuário escolhe.
+Isso é o laço principal do programa (while True: com opções de 1 a N).
