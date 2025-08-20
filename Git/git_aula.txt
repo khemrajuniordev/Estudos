@@ -1,0 +1,185 @@
+1) Setup rápido (Windows/macOS/Linux)
+# 1) Configurar identidade global (aparece nos commits)
+git config --global user.name "Khemraj Junior"     # “quem fez”
+git config --global user.email "teu-email@exemplo" # “como te achar”
+
+# 2) Inicializar um repositório local
+git init            # cria .git e começa a rastrear versões
+git status          # “espelho retrovisor”: o que mudou?
+
+# 3) Autenticação moderna (escolhe 1)
+# 3a) SSH (sem digitar senha sempre)
+ssh-keygen -t ed25519 -C "teu-email@exemplo"       # cria chave
+# copia a chave pública e adiciona no GitHub > Settings > SSH keys
+cat ~/.ssh/id_ed25519.pub
+
+# 3b) GitHub CLI (recomendado)
+# instale o gh (GitHub CLI) e logue:
+gh auth login
+
+2) Fluxo diário solo (trabalhando num projeto)
+git checkout -b feat/pizza-chart          # cria/entra numa branch de feature
+# ... codar, testar ...
+git add .                                 # coloca mudanças na “mochila”
+git commit -m "feat(chart): pizza por categoria"  # salva um ponto no tempo
+git push -u origin feat/pizza-chart       # envia pro GitHub e cria rastreamento
+
+
+Analogia: git add é colocar arquivos na mochila; git commit é tirar uma foto do que vai na mochila; git push é subir a foto pro “drive” (GitHub).
+
+3) Colaboração ágil (PRs, code review, issues, Projects)
+# Abrir Pull Request sem sair do terminal
+gh pr create --fill --base main --head feat/pizza-chart
+# Revisar PRs
+gh pr status
+gh pr checkout <número-ou-url>
+
+
+Issues: cada tarefa/bug tem uma issue com aceitação clara.
+
+Labels: feature, bug, design, good-first-issue.
+
+Projects (v2): quadro Kanban: Backlog → Em Progresso → Em Review → Done.
+
+Templates: crie .github/ISSUE_TEMPLATE.md e PULL_REQUEST_TEMPLATE.md para padronizar.
+
+4) Branching & mensagens de commit
+
+Trunk-based (recomendado): main sempre verde; features curtas via PR.
+
+Convencional Commits (facilita changelog/semver):
+feat:, fix:, docs:, refactor:, test:, chore:.
+
+git commit -m "fix(auth): validação de campos no cadastro"
+
+5) Releases, versões, changelog e Deploy (CI/CD com Actions)
+
+SemVer: MAJOR.MINOR.PATCH → 1.4.2
+
+feat → MINOR; fix → PATCH; breaking changes → MAJOR.
+
+Workflow Node/React (Vite) — build & testes
+
+# .github/workflows/ci.yml
+name: CI
+on: [push, pull_request]
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4       # pega o código
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }     # mesma versão do teu projeto
+      - run: npm ci                      # instala dependências travadas pelo package-lock
+      - run: npm run lint                # qualidade
+      - run: npm test --if-present       # roda testes se existirem
+      - run: npm run build               # garante que “compila”
+
+
+Deploy GitHub Pages (SPA)
+
+# .github/workflows/deploy-pages.yml
+name: Deploy
+on:
+  push:
+    branches: [main]
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    permissions: { pages: write, id-token: write }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - run: npm ci && npm run build
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: dist }            # saída do Vite
+      - uses: actions/deploy-pages@v4
+
+
+Em Settings → Pages → Source: GitHub Actions. Pronto: deploy automático a cada push na main.
+
+6) Segurança & qualidade
+
+.gitignore: evite subir segredos (.env, node_modules/).
+
+Secrets: Settings → Secrets and variables → Actions (ex.: FIREBASE_API_KEY).
+
+Dependabot: atualizações automáticas de dependências (habilite em Code security).
+
+CODEOWNERS: revisores obrigatórios por pasta (ex.: /src/auth @teuUser @mentor).
+
+Branch protection: exija CI verde antes de merge na main.
+
+7) Git avançado que salva vidas
+git stash                   # guarda mudanças sem commitar (trocar de branch rápido)
+git stash pop               # recupera as mudanças
+git revert <hash>           # cria commit que desfaz outro (seguro em main)
+git reset --hard <hash>     # volta o HEAD (cuidado: reescreve histórico local)
+git rebase -i main          # “arruma” commits (squash) antes de abrir PR
+git cherry-pick <hash>      # aplica um commit específico em outra branch
+git bisect start            # caça bugs: bisseção entre “bom” e “ruim”
+
+
+LFS para arquivos grandes (imagens, PSD): git lfs install && git lfs track "*.psd".
+
+8) Estrutura recomendada do repositório
+.
+├─ src/
+├─ public/
+├─ tests/
+├─ .github/
+│  ├─ workflows/          # CI/CD
+│  ├─ ISSUE_TEMPLATE.md   # padrão de issue
+│  └─ PULL_REQUEST_TEMPLATE.md
+├─ .gitignore
+├─ README.md              # visão do projeto, instruções de dev e deploy
+├─ CONTRIBUTING.md        # como contribuir, padrões de commit/branch
+├─ CODE_OF_CONDUCT.md
+└─ package.json
+
+9) Para teus projetos (aplique já)
+
+Finanças Pessoais
+
+Issues: cada bug/feature (ex.: “Salvar por mês no Firestore sem duplicar”).
+
+Branch: fix/firestore-month-dup.
+
+PR com checklist: build passa, print do antes/depois.
+
+Action: CI (build + lint) + Deploy Pages (demo).
+
+FocusLab
+
+Monorepo (opcional) se for web + API no mesmo repositório.
+
+Projects v2: roadmap semanal (MVP 1 semana).
+
+Releases v0.1.0 (MVP), v0.2.0 (relatórios), etc.
+
+TikTok Dev
+
+Repo “conteúdo”: roteiros (/scripts), snippets (/snippets), assets (/assets).
+
+Issue por vídeo; Project com pipeline de produção; Pages com landing e links.
+
+10) Exercícios práticos (1–2h hoje)
+
+Criar um repo do zero com template pro React+Vite
+
+npm create vite@latest meu-app -- --template react
+cd meu-app && git init
+gh repo create kjunior/meu-app --private --source=. --remote=origin --push
+git checkout -b feat/setup && git add . && git commit -m "chore: scaffold vite"
+git push -u origin feat/setup && gh pr create --fill --base main
+gh pr merge --squash --delete-branch
+
+
+Habilitar CI (ci.yml) e Deploy (deploy-pages.yml).
+
+Abrir 3 issues (feature, bug, docs) e mover no Projects.
+
+Criar release v0.1.0 com changelog curto.
+
+Ativar Dependabot e branch protection na main
