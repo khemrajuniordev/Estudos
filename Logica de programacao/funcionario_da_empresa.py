@@ -22,3 +22,4 @@ Lider = Programador("Khemraj", 5500, "Javascript" )
 print(f"Nome do Principal: {Principal.nome}, Seu salário é de: {Principal.salario}")
 print(f"Nome do Diretor é:  {Diretor.nome}, Seu salário é de: {Diretor.salario} e trabalha no departamento: {Diretor.departamento}")
 print(f"Nome do Lider é:  {Lider.nome}, Seu salário é de: {Lider.salario} e trabalha no departamento:{Lider.linguagem}")
+
